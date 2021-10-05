@@ -1,0 +1,79 @@
+REPORT Y_FACTORY_PATTERN.
+
+INTERFACE notification.
+  METHODS: notifyuser.
+ENDINTERFACE.
+
+CLASS smsnotification DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES notification.
+ENDCLASS.
+CLASS smsnotification IMPLEMENTATION.
+  METHOD notification~notifyuser.
+    WRITE: 'Calling the sms notification'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS telephonenotification DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES notification.
+ENDCLASS.
+CLASS telephonenotification IMPLEMENTATION.
+  METHOD notification~notifyuser.
+    WRITE: 'Calling the telephone notification'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS emailnotification DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES notification.
+ENDCLASS.
+CLASS emailnotification IMPLEMENTATION.
+  METHOD notification~notifyuser.
+    WRITE: 'Calling the email notification'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS notificationfactory DEFINITION.
+  PUBLIC SECTION.
+  METHODS : create_notification IMPORTING iv_notification_type TYPE string
+                                EXPORTING er_notification TYPE REF TO notification.
+ENDCLASS.
+CLASS notificationfactory IMPLEMENTATION.
+   METHOD create_notification.
+     IF iv_notification_type = 'Text'.
+       er_notification = NEW smsnotification( ).
+     ELSEIF iv_notification_type = 'Tele'.
+       er_notification = NEW telephonenotification( ).
+     ELSEIF iv_notification_type = 'Email'.
+       er_notification = NEW emailnotification( ).
+    ENDIF.
+ ENDMETHOD.
+ENDCLASS.
+
+CLASS notificationservice DEFINITION.
+  PUBLIC SECTION.
+  DATA : lo_notification TYPE REF TO notification.
+  METHODS: constructor.
+  PRIVATE SECTION.
+  METHODS: callservice.
+ENDCLASS.
+
+CLASS notificationservice IMPLEMENTATION.
+  METHOD constructor.
+    callservice( ).
+  ENDMETHOD.
+  METHOD callservice.
+  DATA(lo_notification_fac) = NEW notificationfactory( ).
+  lo_notification_fac->create_notification(
+    exporting
+      IV_NOTIFICATION_TYPE = 'Text'
+    importing
+      ER_NOTIFICATION      = lo_notification
+  ).
+  lo_notification->notifyuser( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+DATA(lo_notification_service) = NEW NOTIFICATIONSERVICE( ).

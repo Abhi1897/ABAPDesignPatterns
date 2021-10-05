@@ -1,0 +1,122 @@
+REPORT Y_STRATEGY_PATTERN.
+INTERFACE if_alive_behaviour.
+  METHODS: alive.
+ENDINTERFACE.
+
+INTERFACE if_fly_behaviour.
+  METHODS: fly.
+ENDINTERFACE.
+
+INTERFACE if_quack_behaviour.
+  METHODS: quack.
+ENDINTERFACE.
+
+CLASS ycl_no_alive DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES:IF_ALIVE_BEHAVIOUR.
+ENDCLASS.
+CLASS ycl_no_alive IMPLEMENTATION.
+  METHOD if_alive_behaviour~alive.
+    WRITE: 'Dead'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_alive DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES:if_alive_behaviour.
+ENDCLASS.
+CLASS ycl_alive IMPLEMENTATION.
+  METHOD if_alive_behaviour~alive.
+    WRITE: 'Alive'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_fly DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES: if_fly_behaviour.
+ENDCLASS.
+CLASS ycl_fly IMPLEMENTATION.
+  METHOD if_fly_behaviour~fly.
+    WRITE: 'Normal Fly'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_no_fly DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES: if_fly_behaviour.
+ENDCLASS.
+CLASS ycl_no_fly IMPLEMENTATION.
+  METHOD if_fly_behaviour~fly.
+    WRITE: 'No Fly'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_quack DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES: if_quack_behaviour.
+ENDCLASS.
+CLASS ycl_quack IMPLEMENTATION.
+  METHOD if_quack_behaviour~quack.
+    WRITE:'Normal Quack'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_no_quack DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES: if_quack_behaviour.
+ENDCLASS.
+CLASS ycl_no_quack IMPLEMENTATION.
+  METHOD if_quack_behaviour~quack.
+    WRITE:'No Quack'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_duck DEFINITION.
+  PUBLIC SECTION.
+  METHODS: constructor IMPORTING ir_fly_behaviour TYPE REF TO IF_FLY_BEHAVIOUR
+                                ir_alive_behaviour TYPE REF TO IF_ALIVE_BEHAVIOUR
+                                ir_quack_behaviour TYPE REF TO IF_QUACK_BEHAVIOUR,
+          alive,
+          fly,
+          quack.
+  DATA: lr_fly_behaviour TYPE REF TO IF_FLY_BEHAVIOUR,
+        lr_alive_behaviour TYPE REF TO IF_ALIVE_BEHAVIOUR,
+        lr_quack_behaviour TYPE REF TO IF_QUACK_BEHAVIOUR.
+ENDCLASS.
+CLASS ycl_duck IMPLEMENTATION.
+  METHOD Constructor.
+      lr_quack_behaviour = ir_quack_behaviour.
+      lr_alive_behaviour = ir_alive_behaviour.
+      lr_fly_behaviour = ir_fly_behaviour.
+  ENDMETHOD.
+  METHOD: alive.
+    lr_alive_behaviour->alive( ).
+  ENDMETHOD.
+
+  METHOD fly.
+    lr_fly_behaviour->fly( ).
+  ENDMETHOD.
+
+  METHOD quack.
+    lr_quack_behaviour->quack( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+DATA : lr_fly TYPE REF TO IF_FLY_BEHAVIOUR,
+       lr_alive TYPE REF TO IF_ALIVE_BEHAVIOUR,
+       lr_quack TYPE REF TO IF_QUACK_BEHAVIOUR.
+
+lr_fly = NEW YCL_FLY( ).
+lr_alive = NEW YCL_ALIVE( ).
+lr_quack = NEW YCL_QUACK( ).
+
+DATA(lo_duck) = NEW YCL_DUCK(
+  IR_FLY_BEHAVIOUR   = lr_fly
+  IR_ALIVE_BEHAVIOUR = lr_alive
+  IR_QUACK_BEHAVIOUR = lr_quack
+).
+
+lo_duck->alive( ).
+lo_duck->fly( ).
+lo_duck->quack( ).

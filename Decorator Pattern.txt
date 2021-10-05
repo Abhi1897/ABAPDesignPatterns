@@ -1,0 +1,74 @@
+REPORT Y_DECORATOR_PATTERN.
+CLASS YCL_BEVERAGE DEFINITION ABSTRACT.
+  PUBLIC SECTION.
+  METHODS: getcost ABSTRACT RETURNING VALUE(rv_cost) TYPE char3,
+           getdesc ABSTRACT.
+ENDCLASS.
+CLASS YCL_BEVERAGE IMPLEMENTATION.
+*  METHOD getdesc.
+*    WRITE: 'This is a beverage'.
+*  ENDMETHOD.
+ENDCLASS.
+
+CLASS COFFEE DEFINITION INHERITING FROM YCL_BEVERAGE.
+  PUBLIC SECTION.
+  DATA : lv_cost TYPE n VALUE 0.
+  METHODS: getcost REDEFINITION,
+           getdesc REDEFINITION.
+ENDCLASS.
+CLASS COFFEE IMPLEMENTATION.
+  METHOD getcost.
+    rv_cost = 4.
+ ENDMETHOD.
+ METHOD getdesc.
+   WRITE: 'COFFEE'.
+ENDMETHOD.
+ENDCLASS.
+
+CLASS YCL_ADDONS DEFINITION ABSTRACT INHERITING FROM YCL_BEVERAGE.
+  PUBLIC SECTION.
+  DATA : lv_beverage TYPE REF TO ycl_beverage.
+  METHODS: constructor IMPORTING rv_beverage TYPE REF TO ycl_beverage,
+           getcost REDEFINITION,
+           getdesc REDEFINITION.
+ENDCLASS.
+CLASS YCL_ADDONS IMPLEMENTATION.
+  METHOD constructor.
+    super->CONSTRUCTOR( ).
+    lv_beverage = rv_beverage.
+  ENDMETHOD.
+  METHOD getcost.
+    lv_beverage->GETCOST( ).
+  ENDMETHOD.
+  METHOD getdesc.
+    lv_beverage->GETDESC( ).
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS MOCHA DEFINITION INHERITING FROM YCL_ADDONS.
+  PUBLIC SECTION.
+  DATA: lv_mocha TYPE REF TO ycl_beverage.
+  METHODS: constructor IMPORTING rv_beverage TYPE REF TO ycl_beverage,
+           getcost REDEFINITION,
+           getdesc REDEFINITION.
+ENDCLASS.
+CLASS MOCHA IMPLEMENTATION.
+  METHOD constructor.
+    super->CONSTRUCTOR( RV_BEVERAGE = rv_beverage ).
+    lv_mocha = rv_beverage.
+  ENDMETHOD.
+  METHOD getcost.
+    DATA(lv_cost) = LV_BEVERAGE->GETCOST( ).
+    rv_cost = lv_cost + 10.
+  ENDMETHOD.
+  METHOD getdesc.
+  lv_beverage->GETDESC( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+DATA : lo_obj TYPE REF TO YCL_BEVERAGE.
+lo_obj = NEW MOCHA( RV_BEVERAGE = NEW COFFEE( ) ).
+DATA(lv_cost) = lo_obj->GETCOST( ).
+WRITE: lv_cost.
+lo_obj->GETDESC( ).

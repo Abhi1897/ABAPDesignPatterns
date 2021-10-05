@@ -1,0 +1,113 @@
+INTERFACE yif_product_type1.
+  METHODS: set_product_type1,
+    prints.
+ENDINTERFACE.
+
+INTERFACE yif_product_type2.
+  METHODS: set_product_type2,
+    prints.
+ENDINTERFACE.
+
+INTERFACE yif_factory.
+  METHODS: get_product_type1,
+           get_product_type2.
+ENDINTERFACE.
+
+CLASS ycl_product_type1_1 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES yif_product_type1.
+ENDCLASS.
+CLASS ycl_product_type1_1 IMPLEMENTATION.
+  METHOD yif_product_type1~set_product_type1.
+    WRITE: 'TYPE 1'.
+  ENDMETHOD.
+  METHOD yif_product_type1~prints.
+    WRITE: 'Peacock'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_product_type1_2 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES YIF_PRODUCT_TYPE1.
+ENDCLASS.
+CLASS ycl_product_type1_2 IMPLEMENTATION.
+  METHOD yif_product_type1~set_product_type1.
+    WRITE: 'TYPE 1'.
+  ENDMETHOD.
+  METHOD yif_product_type1~prints.
+    WRITE: 'Sparrow'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_product_type2_1 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES YIF_PRODUCT_TYPE2.
+ENDCLASS.
+CLASS ycl_product_type2_1 IMPLEMENTATION.
+  METHOD yif_product_type2~set_product_type2.
+    WRITE: 'TYPE 2'.
+  ENDMETHOD.
+  METHOD yif_product_type2~prints.
+    WRITE: 'Lion'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_product_type2_2 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES YIF_PRODUCT_TYPE2.
+ENDCLASS.
+CLASS ycl_product_type2_2 IMPLEMENTATION.
+  METHOD yif_product_type2~set_product_type2.
+    WRITE: 'TYPE 2'.
+  ENDMETHOD.
+  METHOD yif_product_type2~prints.
+    WRITE: 'Tiger'.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ycl_factory1 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES yif_factory.
+ENDCLASS.
+CLASS ycl_factory1 IMPLEMENTATION.
+  METHOD yif_factory~get_product_type1.
+    DATA: lr_product_type1 TYPE REF TO YIF_PRODUCT_TYPE1.
+    lr_product_type1 = NEW ycl_product_type1_1( ).
+    lr_product_type1->set_product_type1( ).
+    lr_product_type1->prints( ).
+  ENDMETHOD.
+  METHOD yif_factory~GET_PRODUCT_TYPE2.
+    DATA: lr_product_type2 TYPE REF TO YIF_PRODUCT_TYPE2.
+    lr_product_type2 = NEW ycl_product_type2_1( ).
+    lr_product_type2->set_product_type2( ).
+    lr_product_type2->prints( ).
+  ENDMETHOD.
+ENDCLASS.
+CLASS ycl_factory2 DEFINITION.
+  PUBLIC SECTION.
+  INTERFACES yif_factory.
+ENDCLASS.
+CLASS ycl_factory2 IMPLEMENTATION.
+  METHOD yif_factory~get_product_type1.
+    DATA: lr_product_type1 TYPE REF TO YIF_PRODUCT_TYPE1.
+    lr_product_type1 = NEW ycl_product_type1_2( ).
+    lr_product_type1->set_product_type1( ).
+    lr_product_type1->prints( ).
+  ENDMETHOD.
+  METHOD yif_factory~GET_PRODUCT_TYPE2.
+    DATA: lr_product_type2 TYPE REF TO YIF_PRODUCT_TYPE2.
+    lr_product_type2 = NEW ycl_product_type2_2( ).
+    lr_product_type2->set_product_type2( ).
+    lr_product_type2->prints( ).
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+DATA: lr_obj TYPE REF TO yif_factory.
+lr_obj = NEW ycl_factory1( ).
+lr_obj->GET_PRODUCT_TYPE1( ).
+lr_obj->GET_PRODUCT_TYPE2( ).
+
+lr_obj = NEW ycl_factory2( ).
+lr_obj->GET_PRODUCT_TYPE1( ).
+lr_obj->GET_PRODUCT_TYPE2( ).

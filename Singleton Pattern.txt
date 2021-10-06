@@ -1,0 +1,30 @@
+CLASS ycl_singleton DEFINITION CREATE PRIVATE.
+PUBLIC SECTION.
+CLASS-METHODS: getinstance EXPORTING er_singleton TYPE REF TO ycl_singleton.
+PRIVATE SECTION.
+CLASS-DATA: lr_singleton TYPE REF TO ycl_singleton.
+ENDCLASS.
+
+CLASS ycl_singleton IMPLEMENTATION.
+  METHOD: getinstance.
+    IF lr_singleton IS INITIAL.
+      lr_singleton = NEW ycl_singleton( ).
+      er_singleton = lr_singleton.
+    ENDIF.
+    er_singleton = lr_singleton.
+  ENDMETHOD.
+ENDCLASS.
+
+START-OF-SELECTION.
+DATA: lr_singleton TYPE REF TO ycl_singleton,
+      lr_singleton1 TYPE REF TO ycl_singleton,
+      lv_result TYPE abap_bool.
+
+ycl_singleton=>GETINSTANCE(
+  importing
+    ER_SINGLETON = lr_singleton
+).
+ycl_singleton=>GETINSTANCE(
+  importing
+    ER_SINGLETON = lr_singleton1
+).
